@@ -1,0 +1,8 @@
+<launch>
+
+    <node pkg="drone_resilient_height" type="height_estimator" name="height_estimator" clear_params="true" output="screen">
+    </node>
+
+    <node pkg="drone_resilient_height" type="apriltag_transform" name="tag_transform" clear_params="true" output="screen">
+    </node>
+</launch>
