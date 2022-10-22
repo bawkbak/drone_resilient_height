@@ -1,6 +1,11 @@
 <launch>
 
     <node pkg="drone_resilient_height" type="height_estimator" name="height_estimator" clear_params="true" output="screen">
+        <remap from="wamv_pose" to="wamv_pose"/>
+        <remap from="uwb_pose" to="uwb_pose"/>
+        <remap from="tag_pose" to="tag_pose"/>
+        <remap from="drone_pose" to="mavros/local_position/pose"/>
+        <remap from="drone_state" to="mavros/state"/>
     </node>
 
     <node pkg="drone_resilient_height" type="apriltag_transform" name="tag_transform" clear_params="true" output="screen">
