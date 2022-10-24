@@ -95,7 +95,7 @@ void Height :: estimator(){
     // double tag_time = ros::Time::now().toSec();
 
     double tmp_r, tmp_p, tmp_y;
-    tf::Quaternion q(msg_tag.pose.orientation.x, msg_tag.pose.orientation.y, msg_tag.pose.orientation.z, msg_tag.pose.orientation.w);
+    tf::Quaternion q(msg_pose_tag.pose.orientation.x, msg_pose_tag.pose.orientation.y, msg_pose_tag.pose.orientation.z, msg_pose_tag.pose.orientation.w);
     tf::Matrix3x3 m(q);
     m.getRPY(tmp_r, tmp_p, tmp_y);
     cout << "--------------------------" << endl;
