@@ -27,7 +27,7 @@ class Height{
         geometry_msgs::PoseStamped msg_pose_tag;
         geometry_msgs::PoseStamped msg_pose_uwb;
         geometry_msgs::PoseStamped msg_pose_wamv;
-
+        float mavros_height = 0;
         float height_estimated = 0;
         float height_offset = 0;
         bool drone_is_armed = false;
@@ -61,6 +61,8 @@ void Height :: uwbCallback(const geometry_msgs::PoseStamped::ConstPtr& msg){
 
 void Height :: tagCallback(const geometry_msgs::PoseStamped::ConstPtr& msg){
     msg_pose_tag = *msg;
+    height_estimated = msg_pose_tag.pose.position.z;
+    height_offset = mavros_height - msg_pose_tag.pose.position.z;
     return;
 }
 
@@ -70,12 +72,10 @@ void Height :: wamvPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 void Height :: dronePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg){
+    mavros_height = msg->pose.position.z;
     if(drone_is_armed){
-        height_estimated = msg->pose.position.z - height_offset;
-        std_msgs::Float32 msg_height;
-        msg_height.data = height_offset;
-        pub_height.publish(msg_height);
-        cout << "Height: " << height_estimated << endl;
+        height_estimated = mavros_height - height_offset;
+        
     }else{
         cout << "LAND" << endl;
         height_offset = msg->pose.position.z;
@@ -93,6 +93,11 @@ void Height :: estimator(){
     // double current_time = ros::Time::now().toSec();
     // double uwb_time = ros::Time::now().toSec();
     // double tag_time = ros::Time::now().toSec();
+
+    std_msgs::Float32 msg_height;
+    msg_height.data = height_offset;
+    pub_height.publish(msg_height);
+    cout << "Height: " << height_estimated << endl;
 
     double tmp_r, tmp_p, tmp_y;
     tf::Quaternion q(msg_pose_tag.pose.orientation.x, msg_pose_tag.pose.orientation.y, msg_pose_tag.pose.orientation.z, msg_pose_tag.pose.orientation.w);
