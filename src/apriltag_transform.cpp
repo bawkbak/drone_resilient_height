@@ -19,7 +19,7 @@ int main(int argc, char** argv){
     while (n.ok()){
         tf::StampedTransform transform;
         try{
-            listener.lookupTransform("/main_tag", "/drone", ros::Time(0), transform);
+            listener.lookupTransform("/landing", "/drone", ros::Time(0), transform);
         }
         catch (tf::TransformException &ex) {
             // ROS_ERROR("%s",ex.what());
