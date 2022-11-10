@@ -42,7 +42,7 @@ class Height{
 };
 
 Height :: Height(){
-    pub_base_position = n.advertise<geometry_msgs::PoseStamped>("height_estimator/relative_pose", 10);
+    pub_base_position = n.advertise<geometry_msgs::PoseStamped>("height_estimator/landing_pose", 10);
     pub_height = n.advertise<std_msgs::Float32>("height_estimator/relative_height", 10);
 
     sub_wamv_position = n.subscribe<geometry_msgs::PoseStamped>("wamv_pose", 1,  &Height::wamvPoseCallback, this);
@@ -63,6 +63,11 @@ void Height :: tagCallback(const geometry_msgs::PoseStamped::ConstPtr& msg){
     msg_pose_tag = *msg;
     height_estimated = msg_pose_tag.pose.position.z;
     height_offset = mavros_height - msg_pose_tag.pose.position.z;
+
+    geometry_msgs::PoseStamped msg_base;
+    msg_base = msg_base;
+    msg_base.pose.position.z = -0.2;
+    pub_base_position.publish(msg_base);
     return;
 }
 
@@ -99,19 +104,19 @@ void Height :: estimator(){
     pub_height.publish(msg_height);
     cout << "Height: " << height_estimated << endl;
 
-    double tmp_r, tmp_p, tmp_y;
-    tf::Quaternion q(msg_pose_tag.pose.orientation.x, msg_pose_tag.pose.orientation.y, msg_pose_tag.pose.orientation.z, msg_pose_tag.pose.orientation.w);
-    tf::Matrix3x3 m(q);
-    m.getRPY(tmp_r, tmp_p, tmp_y);
-    cout << "--------------------------" << endl;
-    cout << "TAG X: " << msg_pose_tag.pose.position.x << endl;
-    cout << "TAG Y: " << msg_pose_tag.pose.position.y << endl;
-    cout << "TAG Z: " << msg_pose_tag.pose.position.z << endl;
-    cout << "TAG YAW: " << tmp_y * 180 /3.1415926 << endl;
-    cout << endl << endl;
-    cout << "UWB X: " << msg_pose_uwb.pose.position.x << endl;
-    cout << "UWB Y: " << msg_pose_uwb.pose.position.y << endl;
-    cout << "UWB Z: " << msg_pose_uwb.pose.position.z << endl;
+    // double tmp_r, tmp_p, tmp_y;
+    // tf::Quaternion q(msg_pose_tag.pose.orientation.x, msg_pose_tag.pose.orientation.y, msg_pose_tag.pose.orientation.z, msg_pose_tag.pose.orientation.w);
+    // tf::Matrix3x3 m(q);
+    // m.getRPY(tmp_r, tmp_p, tmp_y);
+    // cout << "--------------------------" << endl;
+    // cout << "TAG X: " << msg_pose_tag.pose.position.x << endl;
+    // cout << "TAG Y: " << msg_pose_tag.pose.position.y << endl;
+    // cout << "TAG Z: " << msg_pose_tag.pose.position.z << endl;
+    // cout << "TAG YAW: " << tmp_y * 180 /3.1415926 << endl;
+    // cout << endl << endl;
+    // cout << "UWB X: " << msg_pose_uwb.pose.position.x << endl;
+    // cout << "UWB Y: " << msg_pose_uwb.pose.position.y << endl;
+    // cout << "UWB Z: " << msg_pose_uwb.pose.position.z << endl;
     r.sleep();
     return;
 }
